@@ -4,12 +4,14 @@
 % has try catch statement bc some UAV photos don't have GPS stamp (before I
 % connect Mavic Mapir GPS antenna)
 
-
+% version 2 includes fields for date and time
 % dir_in='F:\Box Sync\Gleason 2\UAV Data\';
 % dir_in='F:\Sask2018\MavicPro1\';
-files=[dir('F:\PAD2018\UAV_working\*\*\*\*\*.jpg');...
-    dir('F:\PAD2018\UAV_working\*\*\*\*.jpg');...
-    dir('F:\PAD2018\UAV_working\*\*\*.jpg')];
+files=[dir('F:\PAD2019\UAV\*\*\*\*\*.jpg');...
+    dir('F:\PAD2019\UAV\*\*\*\*.jpg');...
+    dir('F:\PAD2019\UAV\*\*\*.jpg');...
+    dir('F:\PAD2019\UAV\*\*.jpg');...
+    dir('F:\PAD2019\UAV\*.jpg')];
 i=1;
 for n= 1:length(files)
     path=[files(n).folder, '\', files(n).name];
@@ -22,6 +24,7 @@ for n= 1:length(files)
             coords(i).long=-(coords(i).long(1)+coords(i).long(2)/60+coords(i).long(3)/3600);
             coords(i).z=info.GPSInfo.GPSAltitude;
             coords(i).filename=info.Filename;
+            coords(i).datetime=info.DateTime;
             if ~isempty(strfind(coords(i).filename,'Mavic')) & ~isempty(strfind(coords(i).filename,'MAPIR'))
                 coords(i).cam='MI'; %mavic ir
             elseif ~isempty(strfind(coords(i).filename,'Phantom')) & ~isempty(strfind(coords(i).filename,'MAPIR'))
@@ -48,13 +51,13 @@ for n= 1:length(files)
 end
 disp('Finished loop.')
 ctable=struct2table(coords);
-tablePath='F:\PAD2018\UAV_working\output\PadUAV.csv';
+tablePath='F:\PAD2019\UAV\out\csv\PadUAV.csv';
 writetable(ctable, tablePath);
 
 % write shp
 filesStruct=rmfield(coords, {'lat','long'});
 p= mappoint([coords.long], [coords.lat], filesStruct);
-shapePath='F:\PAD2018\UAV_working\output\shp\PadUAV.shp';
+shapePath='F:\PAD2019\UAV\out\shp\PadUAV.shp';
 shapewrite(p, shapePath);
 
 %% view
